@@ -12,58 +12,10 @@
 
 <body>
     <div id="app">
-        <h1>命名路由</h1>
-        <p>{{test}}</p>
-        <ul>
-            <li>
-                <router-link :to="{name: 'home'}">Home</router-link>
-            </li>
-            <li>
-                <router-link :to="{name: 'foo'}">Foo</router-link>
-            </li>
-            <li>
-                <router-link :to="{name: 'bar'}">Bar</router-link>
-            </li>
-        </ul>
+        <h1>嵌套的命名路由</h1>
         <router-view></router-view>
     </div>
-    <script>
-        const Home = {
-            template: `<div>that is Home</div>`
-        };
-        const Foo = {
-            template: `<div>that is Foo</div>`
-        };
-        const Bar = {
-            template: `<div>that is Bar</div>`
-        }
-        const routes = [{
-                path: '/',
-                name: 'home',
-                component: Home
-            },
-            {
-                path: '/foo',
-                name: 'foo',
-                component: Foo
-            },
-            {
-                path: '/bar',
-                name: 'bar',
-                component: Bar
-            }
-        ]
-        const router = new VueRouter({
-            routes
-        })
-        const app = new Vue({
-            el: '#app',
-            router,
-            data: {
-                test: '123'
-            }
-        })
-    </script>
+    <script src="js/nested-named-view.js"></script>
 </body>
 
 </html>

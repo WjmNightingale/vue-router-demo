@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>组件基础</title>
+    <script src="vendors/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div v-bind:style="{fontSize: postFontSize + 'em'}">
+            <blog-post @enlarge-text="onEnlargeText" v-for="post in posts" v-bind:key="post.id" v-bind:post="post">
+            </blog-post>
+        </div>
+        <custom-input v-model="searchText"></custom-input>
+    </div>
+    <script>
+        Vue.component('blog-post', {
+            props: ['post'],
+            template: `
+            <div class="blog-post">
+                <h1>{{post.title}}</h1>
+                <button @click="enlargeText">点击放大字体</button>
+                <div v-html="post.content"></div>    
+            </div>
+            `,
+            methods: {
+                enlargeText() {
+                    this.$emit('enlarge-text',{
+                        fontSize: 2
+                    })
+                }
+            }
+        })
+        Vue.component('custom-input',{
+            props: ['value'],
+            data() {
+                return {
+                    value: this.value //  本地value值
+                }
+            },
+            template: `
+            <input v-bind:value="value" v-on:input="$emit('input',$event.target.value)">
+            `,
+            methods: {
+                // valueChange() {
+                //     this.$emit('input',this.value)
+                // }
+            }
+        })
+        Vue.component('alert-box',{
+            template: `
+            <div class="alert-box">
+                <strong></strong>
+                <slot></slot>
+            </div>
+            `
+        })
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                posts: [{
+                        id: 1,
+                        title: '怎么种西瓜',
+                        content: '这篇博文教你怎么种西瓜'
+                    },
+                    {
+                        id: 2,
+                        title: '怎么种南瓜',
+                        content: '这篇博文教你怎么种南瓜'
+                    },
+                    {
+                        id: 3,
+                        title: '怎么种冬瓜',
+                        content: '这篇博文教你怎么种冬瓜'
+                    }
+                ],
+                postFontSize: 1,
+                searchText: '查询参数'
+            },
+            methods: {
+                onEnlargeText(data) {
+                    console.log(data)
+                    console.log('监听到了子组件的事件')
+                    this.postFontSize += data.fontSize 
+                    console.log(this.postFontSize)
+                    console.log(this.searchText)
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

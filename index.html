@@ -27,6 +27,92 @@
         <div class="btn-nice">好呀！</div>
         <div class="btn-bad">拒绝！</div>
     </div> -->
+    <div id="app">
+        <input type="text" v-model="post.content">
+        <a-component :key="post.id" test="testData" v-bind="post"></a-component>
+        <base-input
+            v-model="username"
+            class="username-input"
+            placeholder="输入你的名字">
+        </base-input>
+    </div>
+    <script>
+        Vue.component('a-component', {
+            props: ['test', 'title', 'content'],
+            template: `
+            <div class="blog-post">
+                <h3>{{title}}</h3>
+                <div class="content" v-html="content"></div>
+                <button @click="changePost">点我</button>
+                <div v-bind="$attrs">属性值{{test}}</div>
+            </div>
+            `,
+            methods: {
+                changePost() {
+                    this.post = {
+                        id: 2,
+                        title: '新标题',
+                        content: '新内容'
+                    }
+                }
+            }
+        })
+        Vue.component('my-component', {
+            props: {
+                // 基础类型检查，`null`匹配任何类型
+                propA: Number,
+                // 多个可能类型
+                propB: [String, Number],
+                // 必填的字符串
+                propC: {
+                    type: String,
+                    required: true
+                },
+                // 带有默认值的数值类型prop
+                propD: {
+                    type: Number,
+                    default: 100
+                },
+                // 带有默认值的对象类型prop
+                propE: {
+                    type: Object,
+                    // 对象或数组一定会从一个工厂函数返回一个值
+                    default: () => {
+                        message: 'hello'
+                    }
+                },
+                // 自定义验证函数
+                propF: {
+                    validator: (value) => ['success', 'warning', 'error'].indexOf(value) !== -1
+                }
+            }
+        })
+
+        Vue.component('base-input', {
+            inheritAttrs: false,
+            props: ['label', 'value'],
+            template: `
+                <label>
+                    {{label}}
+                    <input
+                        v-bind="$attrs"
+                        v-bind:value="value"
+                        v-on:input="$emit('input',$event.target.value)">    
+                </label>
+            `
+        })
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                post: {
+                    id: 1,
+                    title: '这是标题',
+                    content: '这是博客内容！'
+                },
+                username: '你的名字是什么'
+            }
+        })
+    </script>
 </body>
 
 </html>

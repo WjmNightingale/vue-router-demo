@@ -30,13 +30,16 @@
     <div id="app">
         <input type="text" v-model="post.content">
         <a-component :key="post.id" test="testData" v-bind="post"></a-component>
-        <base-input
-            v-model="username"
-            class="username-input"
-            placeholder="输入你的名字">
+        <base-input v-model="username" class="username-input" placeholder="输入你的名字" @do-something="a">
         </base-input>
+        <p>{{username}}</p>
         <base-checkbox v-model="lovingVue"></base-checkbox>
         <p>{{lovingVue}}</p>
+        <base-textarea v-model="vueContent"></base-textarea>
+        <p>{{vueContent}}</p>
+        <!-- <text-document v-bind:title.sync="title"></text-document> -->
+        <text-document v-bind.sync="doc"></text-document>
+        <p>{{doc.title}}</p>
     </div>
     <script>
         Vue.component('a-component', {
@@ -92,18 +95,63 @@
 
         Vue.component('base-input', {
             inheritAttrs: false,
-            props: ['label', 'value'],
+            model: {
+                prop: 'username',
+                event: 'input'
+            },
+            props: {
+                label: String,
+                username: String
+            },
+            methods: {
+                doSomething() {
+                    this.$emit('do-something', {
+                        text: '测试数据'
+                    })
+                }
+            },
+            created() {
+                console.log('访问组件的事件监听器')
+                console.log(this.$listeners)
+            },
+            computed: {
+                inputListeners: function () {
+                    const vm = this;
+                    return Object.assign({},
+                        this.$listeners,
+                        // 自定义监听器
+                        {
+                            // 这里确保组件配合`v-model`工作
+                            change: function (event) {
+                                console.log('文件内容change改变时被调用')
+                                vm.$emit('change', event.target.value)
+                            },
+                            input: function (event) {
+                                console.log('这里是input自定义监听器')
+                                vm.$emit('input', event.target.value)
+                            },
+                            focus: function (event) {
+                                console.log('激活时被调用')
+                                vm.$emit('focus', event.target.value)
+                            }
+                        }
+                    )
+                }
+            },
             template: `
-                <label>
-                    {{label}}
-                    <input
-                        v-bind="$attrs"
-                        v-bind:value="value"
-                        v-on:input="$emit('input',$event.target.value)">    
-                </label>
+                <div class="container" v-on:click="doSomething">
+                    天啦噜璐璐璐
+                    <label>
+                        {{label}}
+                        <input
+                            v-bind="$attrs"
+                            v-bind:value="username"
+                            v-on="inputListeners">    
+                    </label>
+                </div>
             `
         })
-        Vue.component('base-checkbox',{
+        Vue.component('base-checkbox', {
             model: {
                 prop: 'checked',
                 event: 'change'
@@ -117,16 +165,90 @@
                     v-on:change="$emit('change',$event.target.checked)">
             `
         })
+        Vue.component('base-textarea', {
+            model: {
+                prop: 'content',
+                event: 'input'
+            },
+            props: {
+                content: String
+            },
+            template: `
+            <textarea v-bind:value="content"
+                      v-on:input="$emit('input',$event.target.value)"></textarea>
+            `
+        })
+        Vue.component('text-document', {
+            props: {
+                id: Boolean,
+                isPublished: Boolean,
+                title: String,
+                authors: Array,
+                content: Object
+            },
+            template: `
+            <div class="document">
+                <div>
+                    <h2> {{title}}</h2>
+                    <p v-show="isPublished">已发布标识</p>
+                    <div>
+                        <span>{{id}}</span>
+                        <ul v-for="author in authors">
+                            <li>
+                                <span>{{author.name}}</span>
+                                <span>{{author.age}}</span>
+                            </li>
+                        <ul>
+                    </div>
+                    <div>
+                        <h3>{{content.title}}</h3>
+                        <p>{{content.data}}</p>
+                    </div>
+                </div>
+                <div @click="changeDoc">点我变文档</div>
+            </div>
+            `,
+            methods: {
+                changeDoc() {
+                    console.log('文档变更事件')
+                    this.$emit('update:title','new title' )
+                }
+            }
+        })
         const vm = new Vue({
             el: '#app',
             data: {
+                doc: {
+                    id: 111,
+                    isPublished: true,
+                    title: '测试标题',
+                    authors: [{
+                            name: 'wjm',
+                            age: 24
+                        },
+                        {
+                            name: 'mjw',
+                            age: 42
+                        }
+                    ],
+                    content: {
+                        subTitle: '小标题',
+                        data: '核心数据啊'
+                    }
+                },
                 post: {
                     id: 1,
                     title: '这是标题',
                     content: '这是博客内容！'
                 },
                 username: '你的名字是什么',
-                lovingVue: true
+                lovingVue: true,
+                vueContent: '这是测试数据啊'
+            },
+            methods: {
+                a(data) {
+                    console.log(data)
+                }
             }
         })
     </script>

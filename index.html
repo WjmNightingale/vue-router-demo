@@ -40,8 +40,38 @@
         <!-- <text-document v-bind:title.sync="title"></text-document> -->
         <text-document v-bind.sync="doc"></text-document>
         <p>{{doc.title}}</p>
+        <br>
+        <br>
+        <base-layout>
+            <template slot="header">
+                <h1>这是页头</h1>
+            </template>
+            <p>征文1111</p>
+            <p>征文2222</p>
+            <template slot="footer">
+                <h1>这是页尾</h1>
+            </template>
+        </base-layout>
     </div>
     <script>
+          Vue.component('base-layout', {
+            props: {
+                url: String
+            },
+            template: `
+            <div class="container">
+                <header>
+                    <slot name="header"></slot>
+                </header>
+                <main>
+                    <slot></slot>
+                </main>
+                <footer>
+                    <slot name="footer"></slot>
+                </footer>
+            </div>
+            `
+        })
         Vue.component('a-component', {
             props: ['test', 'title', 'content'],
             template: `

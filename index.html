@@ -51,10 +51,29 @@
             <template slot="footer">
                 <h1>这是页尾</h1>
             </template>
+            <submit-button>父组件内容覆写为Upload</submit-button>
         </base-layout>
+        <navigation-c v-bind:user="user">
+            logged in as {{user.name}}
+        </navigation-c>
+        <ul>
+            <li v-for="todo in todos">
+                <span v-if="todo.isCompleted">√</span>
+                <span>{{todo.text}}</span>
+            </li>
+        </ul>
+        <todo-list v-bind:todos="todos">
+            <!-- 将 slotProps 定义为插槽作用域的名字 -->
+            <template slot-scope="slotProps">
+                <!-- 为待办项自定义一个模板，-->
+                <!-- 通过 `slotProps` 定制每个待办项。-->
+                <span v-if="slotProps.todo.isCompleted">√</span>
+                {{slotProps.todo.text}}
+            </template>
+        </todo-list>
     </div>
     <script>
-          Vue.component('base-layout', {
+        Vue.component('base-layout', {
             props: {
                 url: String
             },
@@ -69,6 +88,41 @@
                 <footer>
                     <slot name="footer"></slot>
                 </footer>
+            </div>
+            `
+        })
+        Vue.component('submit-button', {
+            template: `
+            <button type="submit">
+                    <slot>子组件默认内容为Submit<slot>
+            </button>
+            `
+        })
+        Vue.component('todo-list',{
+            props: ['todos'],
+            template: `
+            <ul>
+                <li v-for="todo in todos"
+                    v-bind:key="todo.id">
+                    <!-- 我们为每个 todo 准备了一个插槽，-->
+                    <!-- 将 todo 对象作为一个插槽的 prop 传入。-->
+                    <slot v-bind:todo="todo">
+                        <!-- 回退的内容 -->
+                        {{ todo.text }}
+                    </slot>
+                </li>
+            </ul>
+            `
+        })
+        Vue.component('navigation-c', {
+            props: {
+                user: Object
+            },
+            template: `
+            <div class="profile">
+               <div class="user-name">
+                    <slot><slot>
+               </div>
             </div>
             `
         })
@@ -241,13 +295,35 @@
             methods: {
                 changeDoc() {
                     console.log('文档变更事件')
-                    this.$emit('update:title','new title' )
+                    this.$emit('update:title', 'new title')
                 }
             }
         })
         const vm = new Vue({
             el: '#app',
             data: {
+                user: {
+                    name: 'slot的名字',
+                    definition: 'slot的定义'
+                },
+                todos: [
+                    {
+                        text: '任务1',
+                        isCompleted: true
+                    },
+                    {
+                        text: '任务2',
+                        isCompleted: true
+                    },
+                    {
+                        text: '任务3',
+                        isCompleted: false
+                    },
+                    {
+                        text: '任务4',
+                        isCompleted: true
+                    }
+                ],
                 doc: {
                     id: 111,
                     isPublished: true,

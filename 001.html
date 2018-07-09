@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>动态组件</title>
+    <script src="vendors/vue.min.js"></script>
+    <script src="vendors/vue-router.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-navigation">
+            <router-link to="/posts"></router-link>
+            <router-link to="/archives"></router-link>
+            <router-view></router-view>
+            <a href="#" @click="a">Posts</a>
+            <a href="#" @click="b">Archives</a>
+        </div>
+        <div class="posts" v-show="showPosts"
+            style="display: flex;">
+            <div class="post-slide-navigation"
+                style="margin-right: 8px;
+                border-right: 2px solid gray">
+                <ul>
+                    <li v-for="(post,index) in posts" v-bind:key="post.id" @click="linkToPost(index)">
+                        <h6>{{post.title}}</h6>
+                    </li>
+                </ul>
+            </div>
+            <div class="post-main-content" v-bind:post="currentPost">
+                <h6>{{currentPost.title}}</h6>
+                <p>{{currentPost.content}}</p>
+                <span v-show="!postIsClicked">点击左边的导航栏的文章标题</span>
+            </div>
+        </div>
+        <div class="archive" v-show="showArchives">
+            Archive component
+        </div>
+    </div>
+    <script>
+        const MainNavigation = {
+            template: `
+            <router-link to="/posts"></router-link>
+            <router-link to="/archives"></router-link>
+            <router-view></router-view>
+            `
+        }
+        const PostMainContent = {
+            props: {
+                currentPost: Object,
+                postIsClicked: String
+            },
+            template: `
+            <div class="post-main-content">
+                <h6>{{currentPost.title}}</h6>
+                <p>{{currentPost.content}}</p>
+                <span v-show="!postIsClicked">点击左边的导航栏的文章标题</span>
+            </div>
+            `
+        }
+
+        const eventHub = new Vue()
+        const app = new Vue({
+            el: '#app',
+            data: {
+                showPosts: true,
+                showArchives: false,
+                postIsClicked: false,
+                currentPost: {
+                    id: '',
+                    title: '',
+                    content: '',
+                },
+                posts: [
+                    {
+                        id: 1,
+                        title: '001',
+                        content: '这是文章1'
+                    },
+                    {
+                        id: 2,
+                        title: '002',
+                        content: '这是文章2'
+                    },
+                    {
+                        id: 3,
+                        title: '003',
+                        content: '这是文章3'
+                    }
+                ]
+            },
+            methods: {
+                linkToPost(index) {
+                    this.postIsClicked = true
+                    console.log(index)
+                    this.currentPost = JSON.parse(JSON.stringify(this.posts[index]))
+                },
+                a(e) {
+                    console.log(e)
+                    e.preventDefault()
+                    this.showPosts = true,
+                    this.showArchives = false
+                },
+                b(e) {
+                    console.log(event)
+                    // e.stopPropagation
+                    // e.stopImmediatePropagation
+                    event.preventDefault()
+                    this.showArchives = true
+                    this.showPosts = false
+                },
+                c(data) {
+                    console.log(data)
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

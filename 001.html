@@ -118,6 +118,41 @@
             }
         })
     </script>
+    <script>
+        function resolveAfterTwoSeconds() {
+            return new Promise((resolve) => {
+                // 如果成功那么三秒后执行resolve
+                setTimeout(() => {
+                    resolve('resolved')
+                },3000)
+            },(reject) => {
+                // 如果失败三秒后执行reject
+                setTimeout(() => {
+                    reject()
+                },3000)
+            })
+        }
+        async function asyncCall() {
+            console.log('calling--' + new Date())
+            var result = await resolveAfterTwoSeconds()
+            console.log(result)
+        }
+        asyncCall()
+
+
+        var a = [4,2,5,6,3,4,5]
+        var hashTab = {}
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] in hashTab) {
+               // nothing
+            } else {
+                hashTab[a[i]] = true
+            }
+        }
+        Object.keys(hashTab)
+
+        Array.from(new Set(a))
+    </script>
 </body>
 
 </html>

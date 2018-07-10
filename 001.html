@@ -19,10 +19,8 @@
             <a href="#" @click="a">Posts</a>
             <a href="#" @click="b">Archives</a>
         </div>
-        <div class="posts" v-show="showPosts"
-            style="display: flex;">
-            <div class="post-slide-navigation"
-                style="margin-right: 8px;
+        <div class="posts" v-show="showPosts" style="display: flex;">
+            <div class="post-slide-navigation" style="margin-right: 8px;
                 border-right: 2px solid gray">
                 <ul>
                     <li v-for="(post,index) in posts" v-bind:key="post.id" @click="linkToPost(index)">
@@ -74,8 +72,7 @@
                     title: '',
                     content: '',
                 },
-                posts: [
-                    {
+                posts: [{
                         id: 1,
                         title: '001',
                         content: '这是文章1'
@@ -102,7 +99,7 @@
                     console.log(e)
                     e.preventDefault()
                     this.showPosts = true,
-                    this.showArchives = false
+                        this.showArchives = false
                 },
                 b(e) {
                     console.log(event)
@@ -122,14 +119,23 @@
         function resolveAfterTwoSeconds() {
             return new Promise((resolve) => {
                 // 如果成功那么三秒后执行resolve
+                // 现实者不功利
+                // 理想者不空谈
+                // 仁爱者不软弱
+                // 刚直者不偏激
+                // 每个人都是尽责的公民 每个人都能坚守自己独立的人格，每个人都能为他人的幸福拓展纵深
+                // 我力求客观，但绝不冷漠
+                // I have tried to be objective
+                // I do not claim to be detached
+                // 我们大多数是普通人，也仅仅只是普通人，花了很多力气来做思考来做抉择，最终还是只能度过平凡的一生。
                 setTimeout(() => {
                     resolve('resolved')
-                },3000)
-            },(reject) => {
+                }, 3000)
+            }, (reject) => {
                 // 如果失败三秒后执行reject
                 setTimeout(() => {
                     reject()
-                },3000)
+                }, 3000)
             })
         }
         async function asyncCall() {
@@ -140,11 +146,11 @@
         asyncCall()
 
 
-        var a = [4,2,5,6,3,4,5]
+        var a = [4, 2, 5, 6, 3, 4, 5]
         var hashTab = {}
         for (let i = 0; i < a.length; i++) {
             if (a[i] in hashTab) {
-               // nothing
+                // nothing
             } else {
                 hashTab[a[i]] = true
             }
@@ -152,6 +158,78 @@
         Object.keys(hashTab)
 
         Array.from(new Set(a))
+
+        // 正则实现string.trim()
+        function trim(string) {
+            return string.replace(/^\s+|\s+$/)
+        }
+
+        // 原型链继承
+        function Animal() {
+            this.body = "肉体"
+        }
+        Animal.prototype.move = function () {
+            console.log('我会移动')
+        }
+
+        function Human(name) {
+            Animal.apply(this, arguments)
+            this.name = name
+        }
+        // Human.prototype.__proto__ = Animal.prototype
+        var f = function () {}
+        f.prototype = Animal.prototype
+        Human.prototype = new f()
+        Human.prototype.useTools = function () {
+            console.log('进化使用工具')
+        }
+        var frank = new Human('frank')
+
+        // es6的写法
+        class Animal {
+            constructor() {
+                this.body = "肉体"
+            }
+            move() {
+                console.log('哇哦，移动')
+            }
+        }
+        class Human extends Animal {
+            constructor(name) {
+                super()
+                this.name = name
+            }
+            useTools() {
+                console.log('哇哦，工具')
+            }
+        }
+        var www = new Human('aaa')
+
+        // 无聊的题目
+        a = {
+            value: 0,
+            toString() {
+                a.value += 1
+                return a.value
+            }
+        }
+
+        // 完美地监听器
+
+        function listener(element,eventType,selector,fn) {
+            element.addEventListener(eventType,(e) => {
+                let el = e.target
+                while (!el.matches(selector)) {
+                    if (element === el) {
+                        el = null
+                        break
+                    }
+                    el = el.parentNode
+                }
+                el && fn.call(el,e,el)
+            })
+            return element
+        }
     </script>
 </body>
 

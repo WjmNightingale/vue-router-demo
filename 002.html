@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>完整的TodoList</title>
+    <script src="vendors/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <form v-on:submit.prevent="addNewTodo">
+            <label for="new-todo">Add new todo</label>
+            <input v-model="newTodoText" id="new-todo" placeholder="E.g.Feed the cat">
+            <button>Add</button>
+        </form>
+        <div>
+            <h2>全部任务</h2>
+            <ul>
+                <li is="todo-item" 
+                    v-for="(todo,index) in todos" 
+                    v-bind:key="todo.id" 
+                    v-bind:title="todo.title" 
+                    v-on:remove="todos.splice(index,1)">
+                </li>
+            </ul>
+        </div>
+        <div>
+            <h2>已完成任务</h2>
+            <ul>
+                <li is="todo-item" 
+                    v-for="(todo,index) in completedTodos" 
+                    v-bind:key="todo.id" 
+                    v-bind:title="todo.title"
+                    v-on:remove="todos.splice(index,1)">
+                </li>
+            </ul>
+        </div>
+        <div>
+            <h2>未完成任务</h2>
+            <ul>
+                <li is="todo-item" 
+                    v-for="(todo,index) in unCompletedTodos" 
+                    v-bind:key="todo.id" 
+                    v-bind:title="todo.title"
+                    v-on:remove="todos.splice(index,1)">
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        Vue.component('todo-item', {
+            props: ['title'],
+            template: `
+            <li>
+                {{title}}
+                <button @click="$emit(\'remove\')">移除</button>
+            </li>
+            `
+        })
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                newTodoText: '',
+                todos: [{
+                        id: 1,
+                        title: 'Do the dishes',
+                        isComplete: true
+                    },
+                    {
+                        id: 2,
+                        title: 'Take out the trash',
+                        isComplete: false
+                    },
+                    {
+                        id: 3,
+                        title: 'Mow the lawn',
+                        isComplete: true
+                    }
+                ],
+            },
+            computed: {
+                nextTodoId: function () {
+
+                    return (this.todos[this.todos.length - 1].id + 0) + 1
+                },
+                completedTodos: function() {
+                    return this.todos.filter((todo) => todo.isComplete)
+                },
+                unCompletedTodos: function() {
+                    return this.todos.filter((todo) => !todo.isComplete)
+                }
+            },
+            methods: {
+                addNewTodo: function () {
+                    this.todos.push({
+                        id: this.nextTodoId,
+                        title: this.newTodoText,
+                        isComplete: false
+                    })
+                    this.newTodoText = ''
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

@@ -57,3 +57,97 @@ Vue.config.keyCode.f1 = 112
 1. 扫一眼 HTML 模板便能轻松定位在 JavaScript 代码里对应的方法。
 2. 因为你无须在 JavaScript 里手动绑定事件，你的 `ViewModel` 代码可以是非常纯粹的逻辑，和 DOM 完全解耦，更易于测试。
 3. 当一个 ViewModel 被销毁时，所有的事件处理器都会自动被删除。你无须担心如何清理它们。
+
+## 表单输入绑定
+
+开发者可以用`v-model`指令在表单`<input>`以及`<textarea>`元素上创建双向数据绑定，它会根据控件类型会自动选取正确的方法来更新元素。尽管有些神奇，但是`v-model`本质上是个语法糖。它负责监听用户的一些输入，并且负责一些极端场景的特殊处理
+
+`v-model`指令会忽略所有的表单元素的`value`、`checked`、`selected`等特性的初始值，而是将Vue实例的数据作为数据来源。你应该通过`JavaScript`在组件的`data`选项中声明初始值
+
+对于需要使用输入法(如中文、日文、韩文等)的语言，你会发现`v-model`不会在输入法组合文字过程中得到更新。如果你也想处理这个过程，请使用`input`事件
+
+单行文本：
+
+```html
+<input v-model="message" placeholder="edit this">
+<p>Message is {{message}}</p>
+```
+
+多行文本：
+
+```html
+<span>Multiline message is: </span>
+<p style="white-space: pre-line;">{{message}}</p>
+<textarea v-model="message" placeholder="multiple lines"></textarea>
+```
+
+复选框
+
+单个复选框，绑定到布尔值
+
+```html
+<input type="checkbox" id="checkbox" v-model="checked">
+<label for="checkbox">{{checked}}</label>
+```
+
+多个复选框，绑定到同一数组
+
+```html
+<div id="app">
+    <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+    <label for="jack">Jack</label>
+    <input type="checkbox" id="john" value="John" v-model="checkedNames">
+    <label for="john"></label>
+    <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+    <label for="mike"></label>
+</div>
+```
+
+单选按钮
+
+```html
+<div id="app">
+    <input type="radio" id="one" value="One" v-model="picked">
+    <label for="one">One</label>
+    <br>
+    <input type="radio" id="two" value="Two" v-model="picked">
+    <label for="two">Two</label>
+    <br>
+    <span>Picked: {{picked}}</span>
+</div>
+```
+
+选择框--单选
+
+```html
+<div id="app">
+   <select v-model="selected">
+    <option disabled value="">请选择</option>
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+   </select>
+   <span>Selected: {{selected}}</span>
+</div>
+```
+
+选择框--多选(值绑定到一个数组)
+
+```html
+<div id="app">
+    <select multiple v-model="selected">
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+        <option>D</option>
+    </select>
+    <br>
+    <span>Selected: {{selected}}</span>
+</div>
+```
+
+## 修饰符
+
+* `v-model.lazy` 在默认情况下，v-model 在每次 input 事件触发后将输入框的值与数据进行同步 .开发者可以添加 `lazy` 修饰符，从而转变为使用 `change` 事件进行同步：
+* `v-model.number` 如果想自动将用户的输入值转为数值类型，可以给 `v-model` 添加 `number` 修饰符.因为即使在 `type="number"` 时，HTML 输入元素的值也总会返回字符串。
+* `v-model.trim` 如果要自动过滤用户输入的首尾空白字符，可以给 `v-model` 添加 `trim` 修饰符
